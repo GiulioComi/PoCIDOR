@@ -116,7 +116,7 @@ if __name__ == "__main__":
     poolSize = psutil.cpu_count() * 2  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(31136505, 31136506)  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(0, 0)  # xrange is faster than range but is not available in Python 3.6
     
     try:
         pool.map(task, iterableIndexes)
