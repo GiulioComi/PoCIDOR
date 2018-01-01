@@ -54,9 +54,12 @@ def setup_session(cookie, proxy, user_agent):
     session_object = requests.Session()
 
     # set Cookie Jar
-    cookies = {
-        str(cookie).split(':')[0] : str(cookie).split(':')[1]
-    }
+    try:
+        cookies = {
+            str(cookie).split(':')[0] : str(cookie).split(':')[1]
+        }
+    except Exception as e: #Ok, no session cookie provided
+        cookies = {}
 
     session_object.cookies = requests.utils.cookiejar_from_dict(cookies)
 
@@ -96,13 +99,13 @@ def task(index):
     save_to_file(output_directory, filename, extension, response.content, index)
 
 
-if __name__ == "__main__":
-    
-    suppress_warnings()
-    parser = parse_input()
+def main(options, args):
 
-    (options, args) = parser.parse_args()
-
+    global url_path
+    global session
+    global output_directory
+    global filename
+    global extension
     url_path = args[0]
     output_directory = options.directory
     extension = options.extension
@@ -116,8 +119,8 @@ if __name__ == "__main__":
     poolSize = psutil.cpu_count() * 2  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(0, 0)  # xrange is faster than range but is not available in Python 3.6
-    
+    iterableIndexes = range(32111221, 32111223)  # xrange is faster than range but is not available in Python 3.6
+
     try:
         pool.map(task, iterableIndexes)
     except Exception as e:
@@ -125,4 +128,17 @@ if __name__ == "__main__":
     finally:
         pool.close()
         pool.join()
-        print("Operation ended")
+
+
+if __name__ == "__main__":
+    suppress_warnings()
+
+    parser = parse_input()
+    (options, args) = parser.parse_args()
+
+    if len(args) < 1:
+        parser.print_help()
+        sys.exit(1)
+
+    main(options, args)
+    print("\033[92mOperation ended\033[0m")
