@@ -67,7 +67,7 @@ def setup_session(cookie, proxy, user_agent):
     session_object.cookies = requests.utils.cookiejar_from_dict(cookies)
 
     # set Proxy (such as Burp)
-    session_object.proxies = {"http" : proxy, "https" : proxy}
+    session_object.proxies = {"http": proxy, "https": proxy}
 
     # set User-Agent
     session_object.headers['User-Agent'] = user_agent
@@ -122,10 +122,10 @@ if __name__ == "__main__":
     
     session = setup_session(cookie, proxy, user_agent)
 
-    poolSize = psutil.cpu_count() * 2  # max 2 * number of cores of the cpu
+    poolSize = 4  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(min, max)  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(int(min), int(max))  # xrange is faster than range but is not available in Python 3.6
     
     try:
         pool.map(task, iterableIndexes)
