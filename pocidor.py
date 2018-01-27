@@ -97,8 +97,8 @@ def task(index):
     task to be executed by each thread of the pool
     :param index that is part of the Url to request
     """
-    
-    full_url = url_path.format(index)
+
+    full_url = url_path.format(str(index).rjust(5, '0'))
     response = session.get(full_url, verify=False) # verify=False for avoid 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
     save_to_file(output_directory, filename, extension, response.content, index)
 
@@ -117,15 +117,15 @@ if __name__ == "__main__":
     cookie = options.cookie
     proxy = options.proxy
     user_agent = options.user_agent
-    min = options.min
-    max = options.max
+    min_value = options.min
+    max_value = options.max
     
     session = setup_session(cookie, proxy, user_agent)
 
     poolSize = 4  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(int(min), int(max))  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(int(min_value), int(max_value))  # xrange is faster than range but is not available in Python 3.6
     
     try:
         pool.map(task, iterableIndexes)
