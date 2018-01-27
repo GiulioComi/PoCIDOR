@@ -35,6 +35,9 @@ def parse_input():
 
     parser.add_option("-M", "--max", dest="max",
                       help="Set maximum value", metavar="MAX")
+
+    parser.add_option("-P", "--padding", dest="pad",
+                      help="Set padding size", metavar="PAD")
     
     (options, args) = parser.parse_args()
     if len(args) < 1:
@@ -97,9 +100,8 @@ def task(index):
     task to be executed by each thread of the pool
     :param index that is part of the Url to request
     """
-
-    full_url = url_path.format(str(index).rjust(5, '0'))
-    response = session.get(full_url, verify=False) # verify=False for avoid 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
+    full_url = url_path.format(str(index).rjust(int(pad), '0')) # pad to have the correct lenght
+    response = session.head(full_url, verify=False) # verify=False for avoiding 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
     save_to_file(output_directory, filename, extension, response.content, index)
 
 
@@ -117,15 +119,16 @@ if __name__ == "__main__":
     cookie = options.cookie
     proxy = options.proxy
     user_agent = options.user_agent
-    min_value = options.min
-    max_value = options.max
+    min_value = int(options.min)
+    max_value = int(options.max)
+    pad = int(options.pad)
     
     session = setup_session(cookie, proxy, user_agent)
 
     poolSize = 4  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(int(min_value), int(max_value))  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(min_value, max_value)  # xrange is faster than range but is not available in Python 3.6
     
     try:
         pool.map(task, iterableIndexes)
