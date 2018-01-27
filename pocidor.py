@@ -101,7 +101,7 @@ def task(index):
     :param index that is part of the Url to request
     """
     full_url = url_path.format(str(index).rjust(int(pad), '0')) # pad to have the correct lenght
-    response = session.head(full_url, verify=False) # verify=False for avoiding 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
+    response = session.get(full_url, verify=False) # verify=False for avoiding 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
     save_to_file(output_directory, filename, extension, response.content, index)
 
 
