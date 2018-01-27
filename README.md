@@ -8,7 +8,8 @@ Use {} has a placeholder for the sequential indexes.
 - ![#1589F0](https://placehold.it/15/1589F0/000000?text=+)
 Usage: pocidor.py [options] <target_url>
 - ![#f03c15](https://placehold.it/15/f03c15/000000?text=+)
-<code><pre>Options:
+
+<pre>Options:
   -h, --help            show this help message and exit
   -c COOKIE_STRING, --cookie=COOKIE_STRING
                         Set cookies for the request
@@ -26,7 +27,7 @@ Usage: pocidor.py [options] <target_url>
   -M MAX, --max=MAX     Set maximum value
   -P PAD, --padding=PAD
                         Set padding size
-</pre></code>          
+</pre>
 
 - ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) Example:
 
