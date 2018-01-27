@@ -30,6 +30,12 @@ def parse_input():
     parser.add_option("-u", "--user-agent", dest="user_agent",
                       help="Set User-Agent", metavar="USER_AGENT")
 
+    parser.add_option("-m", "--min", dest="min",
+                      help="Set minimum value", metavar="MIN")
+
+    parser.add_option("-M", "--max", dest="max",
+                      help="Set maximum value", metavar="MAX")
+    
     (options, args) = parser.parse_args()
     if len(args) < 1:
         parser.print_help()
@@ -91,8 +97,9 @@ def task(index):
     task to be executed by each thread of the pool
     :param index that is part of the Url to request
     """
- 
-    response = session.get(url_path + (str(index)), verify=False) # verify=False for avoid 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
+    
+    full_url = url_path.format(index)
+    response = session.get(full_url, verify=False) # verify=False for avoid 'SSL: CERTIFICATE_VERIFY_FAILED' with proxy certificates
     save_to_file(output_directory, filename, extension, response.content, index)
 
 
@@ -110,13 +117,15 @@ if __name__ == "__main__":
     cookie = options.cookie
     proxy = options.proxy
     user_agent = options.user_agent
-
+    min = options.min
+    max = options.max
+    
     session = setup_session(cookie, proxy, user_agent)
 
     poolSize = psutil.cpu_count() * 2  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(0, 0)  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(min, max)  # xrange is faster than range but is not available in Python 3.6
     
     try:
         pool.map(task, iterableIndexes)
