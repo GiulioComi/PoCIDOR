@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from multiprocessing.dummy import Pool as ThreadPool
 import requests
-import psutil
 import os
 import sys
 from optparse import OptionParser
@@ -15,28 +14,28 @@ def parse_input():
     parser.add_option("-c", "--cookie", dest="cookie",
                       help="Set cookies for the request", metavar="COOKIE_STRING")
 
-    parser.add_option("-e", "--extension", dest="extension",
+    parser.add_option("-e", "--extension", default="html", dest="extension",
                       help="Set extension", metavar="EXTENSION")
 
-    parser.add_option("-o", "--output", dest="output",
+    parser.add_option("-o", "--output", dest="output", default="file",
                       help="Set filename output", metavar="FILENAME")
 
-    parser.add_option("-d", "--directory", dest="directory",
+    parser.add_option("-d", "--directory", default="outputDirectory", dest="directory",
                       help="Set directory", metavar="DIRECTORY")
 
     parser.add_option("-p", "--proxy", dest="proxy",
                       help="Set proxy", metavar="PROXY")
 
-    parser.add_option("-u", "--user-agent", dest="user_agent",
+    parser.add_option("-u", "--user-agent", default="Security Test", dest="user_agent",
                       help="Set User-Agent", metavar="USER_AGENT")
 
-    parser.add_option("-m", "--min", dest="min",
+    parser.add_option("-m", "--min", dest="min", default=0,
                       help="Set minimum value", metavar="MIN")
 
-    parser.add_option("-M", "--max", dest="max",
+    parser.add_option("-M", "--max", dest="max", default=0,
                       help="Set maximum value", metavar="MAX")
 
-    parser.add_option("-P", "--padding", dest="pad",
+    parser.add_option("-P", "--padding", dest="pad", default=0,
                       help="Set padding size", metavar="PAD")
     
     (options, args) = parser.parse_args()
@@ -63,11 +62,15 @@ def setup_session(cookie, proxy, user_agent):
     session_object = requests.Session()
 
     # set Cookie Jar
-    cookies = {
-        str(cookie).split(':')[0] : str(cookie).split(':')[1]
-    }
+    try:
+        cookies = {
+            str(cookie).split(':')[0]: str(cookie).split(':')[1]
+        }
 
-    session_object.cookies = requests.utils.cookiejar_from_dict(cookies)
+        session_object.cookies = requests.utils.cookiejar_from_dict(cookies)
+    except Exception:
+        pass
+
 
     # set Proxy (such as Burp)
     session_object.proxies = {"http": proxy, "https": proxy}
@@ -128,7 +131,7 @@ if __name__ == "__main__":
     poolSize = 4  # max 2 * number of cores of the cpu
     pool = ThreadPool(poolSize)
     # create an iterable object from the range of indexes because the {@see Pool.map} needs an Iterable as argument
-    iterableIndexes = range(min_value, max_value)  # xrange is faster than range but is not available in Python 3.6
+    iterableIndexes = range(min_value, max_value)
     
     try:
         pool.map(task, iterableIndexes)
